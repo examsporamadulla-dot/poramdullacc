@@ -1,0 +1,695 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poramdula C.C. | Elite Attendance</title>
+
+<style>
+:root {
+  --gold: #d4af37;
+  --light-gold: #ffe7a0;
+  --black: #080808;
+  --panel: #121212;
+  --muted: #aaa49a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #f8f5ec;
+  background:
+    radial-gradient(ellipse at 10% 0%, #3c2c0b55, transparent 40%),
+    radial-gradient(ellipse at 90% 60%, #6d501522, transparent 38%),
+    var(--black);
+  min-height: 100vh;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg, transparent 35%, #d4af3707 50%, transparent 65%
+  );
+  background-size: 250% 100%;
+  animation: ambient 12s linear infinite;
+}
+
+header {
+  position: relative;
+  padding: 23px 22px;
+  border-bottom: 1px solid #d4af3744;
+  background: #090909ed;
+  backdrop-filter: blur(14px);
+}
+
+.header-inner, main, footer {
+  max-width: 1180px;
+  margin: auto;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+}
+
+.logo {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--gold);
+  border-radius: 15px;
+  color: var(--gold);
+  font-size: 29px;
+  font-weight: 800;
+  box-shadow: 0 0 24px #d4af371c;
+}
+
+h1, h2, h3, p { margin-top: 0; }
+
+.brand h1 {
+  margin-bottom: 5px;
+  font-size: clamp(22px, 4vw, 31px);
+  letter-spacing: 1.5px;
+}
+
+.brand h1 span { color: var(--gold); }
+
+.brand p {
+  color: var(--muted);
+  margin-bottom: 0;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+}
+
+main {
+  position: relative;
+  padding: 35px 20px 60px;
+}
+
+.hero {
+  padding: 34px;
+  border: 1px solid #d4af374c;
+  border-radius: 20px;
+  background: linear-gradient(120deg, #17140c, #101010 65%, #19150b);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 25px;
+  animation: appear .7s ease both;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  right: -65px;
+  top: -90px;
+  border: 1px solid #d4af3730;
+  border-radius: 50%;
+  box-shadow: 0 0 0 25px #d4af3708, 0 0 0 55px #d4af3705;
+  pointer-events: none;
+}
+
+.eyebrow {
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.hero h2 {
+  font-size: clamp(27px, 5vw, 43px);
+  line-height: 1.2;
+  margin: 13px 0;
+}
+
+.hero h2 span { color: var(--gold); }
+
+.hero p {
+  color: var(--muted);
+  max-width: 620px;
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+
+/* DATE AND TIME */
+
+.date-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 32px;
+}
+
+.date-card {
+  min-width: 0;
+  background: linear-gradient(145deg, #171717, #0d0d0d);
+  border: 1px solid #d4af3740;
+  border-radius: 15px;
+  padding: 22px;
+  box-shadow: 0 8px 30px #0003;
+}
+
+.panel-label {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.live-date {
+  font-size: clamp(17px, 3vw, 23px);
+  font-weight: 700;
+  color: var(--light-gold);
+  margin-bottom: 8px;
+}
+
+.live-time {
+  font-size: 27px;
+  font-weight: 700;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.timezone {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.calendar-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+input[type="date"] {
+  flex: 1;
+  min-width: 160px;
+  width: 100%;
+  background: #080808;
+  border: 1px solid #d4af3755;
+  border-radius: 9px;
+  padding: 12px;
+  color: #f8f5ec;
+  color-scheme: dark;
+  font: inherit;
+  outline: none;
+}
+
+input[type="date"]:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px #d4af3715;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 15px;
+  border-radius: 9px;
+  border: 1px solid var(--gold);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .2s ease;
+  text-decoration: none;
+}
+
+.btn-gold {
+  background: var(--gold);
+  color: #080808;
+}
+
+.btn-gold:hover {
+  background: var(--light-gold);
+  box-shadow: 0 0 20px #d4af3730;
+}
+
+.btn-dark {
+  background: #171717;
+  color: var(--light-gold);
+}
+
+.btn-dark:hover {
+  background: #292313;
+}
+
+.selected-date {
+  margin: 13px 0 0;
+  color: var(--gold);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.notice {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 15px 17px;
+  margin-bottom: 30px;
+  border: 1px solid #d4af372c;
+  border-radius: 12px;
+  background: #d4af3708;
+  color: #bdb7aa;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.notice strong { color: var(--light-gold); }
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 32px 0 20px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.gold-line {
+  height: 2px;
+  width: 55px;
+  margin-top: 9px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+
+.section-heading small {
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
+.grades {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px;
+}
+
+.grade-card {
+  min-width: 0;
+  background: linear-gradient(145deg, #171717, #0e0e0e);
+  border: 1px solid #ffffff15;
+  border-radius: 15px;
+  padding: 21px;
+  transition: transform .25s, border-color .25s, box-shadow .25s;
+  animation: appear .55s ease both;
+}
+
+.grade-card:hover {
+  transform: translateY(-3px);
+  border-color: #d4af3780;
+  box-shadow: 0 10px 35px #d4af3710;
+}
+
+.grade-heading {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 18px;
+}
+
+.grade-number {
+  display: grid;
+  place-items: center;
+  min-width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  background: #d4af3712;
+  border: 1px solid #d4af374a;
+  color: var(--gold);
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.grade-heading h3 {
+  margin: 0 0 4px;
+  font-size: 17px;
+}
+
+.grade-heading p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.sections {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.sections a {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  text-decoration: none;
+  color: #e5d6a4;
+  background: #d4af3708;
+  border: 1px solid #d4af3733;
+  border-radius: 9px;
+  padding: 12px 3px;
+  font-size: 13px;
+  font-weight: 650;
+  transition: all .22s ease;
+}
+
+.sections a:hover,
+.sections a:focus-visible {
+  color: #080808;
+  background: var(--gold);
+  border-color: var(--light-gold);
+  box-shadow: 0 0 20px #d4af3733;
+  transform: translateY(-2px);
+}
+
+footer {
+  position: relative;
+  border-top: 1px solid #d4af3730;
+  padding: 25px 20px;
+  color: #77736a;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+footer span { color: var(--gold); }
+
+@keyframes ambient {
+  from { background-position: 150% 0; }
+  to { background-position: -150% 0; }
+}
+
+@keyframes appear {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 650px) {
+  main { padding: 25px 13px 45px; }
+  header { padding: 19px 14px; }
+  .hero { padding: 25px 20px; }
+  .date-panel { grid-template-columns: 1fr; }
+  .grades { grid-template-columns: 1fr; }
+  .grade-card { padding: 17px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="logo">P</div>
+      <div>
+        <h1>PORAMDULA <span>C.C.</span></h1>
+        <p>ATTENDANCE MANAGEMENT SYSTEM</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <div class="eyebrow">✦ School Administration</div>
+    <h2>Attendance, <span>Elevated.</span></h2>
+    <p>
+      Welcome to Poramdula C.C. attendance dashboard.
+      Select a date, grade and class to view the corresponding
+      student attendance report.
+    </p>
+  </section>
+
+  <!-- LIVE DATE AND CALENDAR -->
+
+  <section class="date-panel">
+
+    <div class="date-card">
+      <div class="panel-label">✦ Current Date & Time</div>
+      <div class="live-date" id="liveDate">Loading date...</div>
+      <div class="live-time" id="liveTime">--:--:--</div>
+      <div class="timezone">Sri Lanka Standard Time · Asia/Colombo</div>
+    </div>
+
+    <div class="date-card">
+      <div class="panel-label">▦ Attendance Calendar</div>
+
+      <label for="attendanceDate"
+             style="display:block; margin-bottom:9px; color:#aaa49a; font-size:13px;">
+        Select a date to view attendance
+      </label>
+
+      <div class="calendar-row">
+        <input type="date" id="attendanceDate" required>
+        <button class="btn btn-gold" id="todayButton" type="button">
+          Today
+        </button>
+      </div>
+
+      <p class="selected-date" id="selectedDateText" aria-live="polite">
+        Selected date: Today
+      </p>
+    </div>
+
+  </section>
+
+  <div class="notice">
+    <span aria-hidden="true">✦</span>
+    <div>
+      <strong>Principal's Attendance Archive</strong><br>
+      Select a previous date from the calendar, then select a grade
+      and class to open its attendance report for that date.
+      Historical reports require attendance records saved for the selected date.
+    </div>
+  </div>
+
+  <div class="section-heading">
+    <div>
+      <h2>Class Directory</h2>
+      <div class="gold-line"></div>
+    </div>
+    <small>GRADES 06 — 13</small>
+  </div>
+
+  <section class="grades" id="gradeList"></section>
+
+</main>
+
+<footer>
+  <span>PORAMDULA C.C.</span> &nbsp; | &nbsp;
+  STUDENT ATTENDANCE PORTAL
+</footer>
+
+<script>
+"use strict";
+
+const gradeList = document.getElementById("gradeList");
+const attendanceDate = document.getElementById("attendanceDate");
+const selectedDateText = document.getElementById("selectedDateText");
+const liveDate = document.getElementById("liveDate");
+const liveTime = document.getElementById("liveTime");
+const todayButton = document.getElementById("todayButton");
+
+const sections = ["A", "B", "C", "D", "E", "F", "G"];
+
+const dateFormatter = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Asia/Colombo",
+  weekday: "long",
+  day: "2-digit",
+  month: "long",
+  year: "numeric"
+});
+
+const timeFormatter = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Asia/Colombo",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hour12: true
+});
+
+/*
+ * Get the date in Sri Lanka.
+ * Do not use UTC's ISO date directly because it may differ
+ * from the local calendar date.
+ */
+function getSriLankaDate() {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Colombo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(new Date());
+
+  const values = {};
+
+  for (const part of parts) {
+    if (part.type !== "literal") {
+      values[part.type] = part.value;
+    }
+  }
+
+  return `${values.year}-${values.month}-${values.day}`;
+}
+
+/* Update the clock and date automatically. */
+function updateClock() {
+  const now = new Date();
+
+  liveDate.textContent = dateFormatter.format(now);
+  liveTime.textContent = timeFormatter.format(now);
+
+  // Refresh the maximum date if the calendar remains open overnight.
+  attendanceDate.max = getSriLankaDate();
+}
+
+/* Keep the report links synchronized with the selected date. */
+function updateSelectedDate() {
+  const today = getSriLankaDate();
+  const selected = attendanceDate.value;
+
+  if (!selected) {
+    selectedDateText.textContent = "Please select a date.";
+    return;
+  }
+
+  if (selected > today) {
+    attendanceDate.value = today;
+  }
+
+  const finalDate = attendanceDate.value;
+
+  if (finalDate === today) {
+    selectedDateText.textContent =
+      "Selected date: Today (" + finalDate + ")";
+  } else {
+    selectedDateText.textContent =
+      "Selected date: " + finalDate;
+  }
+
+  updateReportLinks();
+}
+
+/*
+ * Example destination:
+ * class-report.html?class=6-A&date=2026-10-25
+ *
+ * class-report.html must read both query parameters
+ * and load records for the selected class and date.
+ */
+function updateReportLinks() {
+  const selected = attendanceDate.value;
+
+  document.querySelectorAll(".sections a").forEach(link => {
+    const url = new URL(link.href, window.location.href);
+
+    url.searchParams.set("date", selected);
+
+    link.href = url.toString();
+  });
+}
+
+/* Create grades 6 through 13 and classes A through G. */
+for (let grade = 6; grade <= 13; grade++) {
+  const card = document.createElement("section");
+  card.className = "grade-card";
+  card.style.animationDelay = `${(grade - 6) * 55}ms`;
+
+  const heading = document.createElement("div");
+  heading.className = "grade-heading";
+
+  const number = document.createElement("div");
+  number.className = "grade-number";
+  number.textContent = String(grade);
+
+  const info = document.createElement("div");
+
+  const title = document.createElement("h3");
+  title.textContent = `Grade ${grade}`;
+
+  const subtitle = document.createElement("p");
+  subtitle.textContent = "Select your class section";
+
+  info.append(title, subtitle);
+  heading.append(number, info);
+
+  const grid = document.createElement("div");
+  grid.className = "sections";
+
+  sections.forEach(section => {
+    const link = document.createElement("a");
+
+    link.href = `class-report.html?class=${grade}-${section}`;
+    link.textContent = `Class ${section}`;
+
+    link.setAttribute(
+      "aria-label",
+      `Grade ${grade}, Class ${section} attendance report`
+    );
+
+    grid.appendChild(link);
+  });
+
+  card.append(heading, grid);
+  gradeList.appendChild(card);
+}
+
+/* Initialize calendar with today's Sri Lankan date. */
+attendanceDate.max = getSriLankaDate();
+attendanceDate.value = getSriLankaDate();
+
+attendanceDate.addEventListener("change", () => {
+  const today = getSriLankaDate();
+
+  if (attendanceDate.value > today) {
+    attendanceDate.value = today;
+    alert("Future attendance reports are not available.");
+  }
+
+  updateSelectedDate();
+});
+
+/* Return to today's date. */
+todayButton.addEventListener("click", () => {
+  attendanceDate.value = getSriLankaDate();
+  updateSelectedDate();
+});
+
+/* Initial setup. */
+updateClock();
+updateSelectedDate();
+
+/* Refresh the clock every second. */
+setInterval(updateClock, 1000);
+</script>
+
+</body>
+</html>
